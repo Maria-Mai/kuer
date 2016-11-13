@@ -1,82 +1,144 @@
-/*
- ============================================================================
- Name        : helloGrafix.c
- Author      : Daniel Wittekind
- Version     : 1.0
- Description : Dimmen von Status LEDs und Display fuer den Nibo2
- ============================================================================
- */
-// Standard Includes fuer das Funktionieren des Nibo2
-#include <nibo/niboconfig.h>
-#include <nibo/iodefs.h>
-#include <nibo/bot.h>
+#include "n2sound.h"
 
-// Bibliothek zum Ansteuern des Display
-#include <nibo/display.h>
+enum {
+	RED, ORANGE, GREEN
+};
 
-// Bibliothek mit Grafikfunktionen
-#include <nibo/gfx.h>
+typedef struct {
+	char name[] = "C4";
+	int frequence = C4;
+	uint16_t initMessage = 0xAAAA;
+	int distanceSensor[2] = { -1, 0 };
+int led[2][2] =;
+}c;
 
-// Ein- und Ausgabefunktionen
-#include <stdio.h>
+typedef struct {
+	char name[] = "C SHARP";
+	int frequence = C4SHARP;
+	uint16_t initMessage = 0xBAAA;
+	int distanceSensor[2] = { 0, 1 };
+int led[] =;
+}cSharp;
 
-int main(){
+typedef struct {
+	char name[] = "D4";
+	int frequence = D4;
+	uint16_t initMessage = 0xCAAA;
+	int distanceSensor[2] = { -1, 1 };
+int led[] =;
+}d;
 
-	// Initialisierung des Roboters (immer noetig)
-	bot_init();
+typedef struct {
+	char name[] = "D4 SHARP";
+	int frequence = D4SHARP;
+	uint16_t initMessage = 0xDAAA;
+	int distanceSensor[2] = { 1, 4 };
+int led[] =;
+}dSharp;
 
-	// initialisiert das Display und die Grafikfunktionen
-	display_init();
-	gfx_init();
+typedef struct {
+	char name[] = "E4";
+	int frequence = E4;
+	uint16_t initMessage = 0xEAAA;
+	int distanceSensor[2] = { -1, 2 };
+int led[] =;
+}e;
 
-	/*
-	 * Setzt den Punkt, ab dem gezeichnet werden soll (Cursor)
-	 * Der erste Parameter ist die Horizontale (x) und der zweite die Vertikale.
-	 * Die Position 0,0 bezeichnet die obere linke Ecke des Displays
-	 */
-	gfx_move(10,0);
+typedef struct {
+	char name[] = "F4";
+	int frequence = F4;
+	uint16_t initMessage = 0xFAAA;
+	int distanceSensor[2] = { -1, 3 };
+int led[] =;
+}f;
 
-	/*
-	 * zeichnet eine horizontale Linie mit der angegebenen Laenge in Pixeln
-	 * Cursor ist nach einer Zeichenoperation immer am Ende der gezeichneten Grafik
-	 */
-	gfx_hline(20);
+typedef struct {
+	char name[] = "F4 SHARP";
+	int frequence = F4SHARP;
+	uint16_t initMessage = 0xBBBB;
+	int distanceSensor[2] = { 0, 2 };
+int led[] =;
+}fSharp;
 
-	// zeichnet eine vertikale Linie mit der angegebenen Laenge
-	gfx_vline(20);
+typedef struct {
+	char name[] = "G4";
+	int frequence = G4SHARP;
+	uint16_t initMessage = 0xABBB;
+	int distanceSensor[2] = { -1, 4 };
+int led[] =;
+}g;
 
-	// Die jeweilige Funktion liefert die aktuelle Cursorposition fuer Horizontale (x) und Vertikale (y)
-	int x = gfx_get_x();
-	int y = gfx_get_y();
+typedef struct {
+	char name[] = "G4 SHARP";
+	int frequence = G4SHARP;
+	uint16_t initMessage = 0xCBBB;
+	int distanceSensor[2] = { 2, 4 };
+int led[] =;
+}gSharp;
 
-	// Zeichnet eine Linie von der Cursorposition zum angegebenen Punkt
-	gfx_lineTo(x - 20, y -20);
+typedef struct {
+	char name[] = "A4";
+	int frequence = A4;
+	uint16_t initMessage = 0xDBBB;
+	int distanceSensor[2] = { 0, 3 };
+int led[] =;
+}a;
 
-	gfx_move(40, 0);
+typedef struct {
+	char name[] = "A4 SHARP";
+	int frequence = A4SHARP;
+	uint16_t initMessage = 0xEBBB;
+	int distanceSensor[2] = { 0, 4 };
+int led[] =;
+}aSharp;
 
-	// schreibt den uebergebenen Text auf das Display
-	gfx_print_text("word");
+typedef struct {
+	char name[] = "B4";
+	int frequence = B4;
+	uint16_t initMessage = 0xFBBB;
+	int distanceSensor[2] = { 1, 3 };
+int led[] =;
+}b;
 
-	gfx_move(10, 24);
+int triad[11] = { C4, C4SHARP, D4, D4SHARP, E4, F4, F4SHARP, G4, G4SHARP, A4,
+		A4SHARP, B4 }
 
-	// schreibt einen einzelnen Buchstaben
-	gfx_print_char('A');
+void playTriad(int rootNote, int pos) {
 
-	gfx_move(10, 40);
+	int i = 0;
 
-	x = gfx_get_x();
-	y = gfx_get_y();
+	while (rootNote != triad[i]) {
+		i = (i + 1) % 11;
+	}
 
-	char text[20] = "Cursorposition";
+	if (pos == 1) {
+		for (int j = 0; j < 4; j++) {
+			i = (i + 1) % 11;
+		}
+	} else {
+		for (int j = 0; j < 7; j++) {
+			i = (i + 1) % 11;
+		}
+	}
 
-	gfx_print_text(text);
+	tone(triad[i], 500);
 
-	gfx_move(10, 48);
-
-	sprintf(text, "x: %02i pxl, y: %02i pxl", x, y);
-
-	gfx_print_text(text);
-
-    return 0;
+	setLEDForSound(sound);
+	setDisplayForSound(sound);
 }
 
+void playMasterSound() {
+
+}
+
+int getSound() {
+
+}
+
+void setLEDForSound(int sound) {
+
+}
+
+void setDisplayForSound(int sound) {
+
+}
