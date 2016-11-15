@@ -1,5 +1,5 @@
 /**
- * @file slave.c
+ * @file mainSlave.c
  * @author Maria Hinsche
  * @brief programm for the slave
  */
